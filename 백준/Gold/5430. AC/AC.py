@@ -1,26 +1,24 @@
 import sys
 input = sys.stdin.readline
 tc = int(input())
-
 for _ in range(tc):
-    func = input().strip()
+    func = input()
     n = int(input())
     A = input().strip()[1:-1]
-    
-    # 빈 문자열일 경우 빈 리스트로 처리
     if A:
         A = list(map(int, A.split(",")))
     else:
         A = []
-        
     reverse_flag = False
     error_flag = False
-
     for i in func:
         if i == "R":
-            reverse_flag = not reverse_flag
+            if reverse_flag:
+                reverse_flag = False
+            else:
+                reverse_flag = True
         elif i == "D":
-            if not A:  # A가 비어 있는 경우
+            if n == 0:
                 print("error")
                 error_flag = True
                 break
@@ -28,8 +26,8 @@ for _ in range(tc):
                 A.pop(0)
             else:
                 A.pop()
-    
+            n -= 1
+    if reverse_flag:
+        A.reverse()
     if not error_flag:
-        if reverse_flag:
-            A = A[::-1]
         print(f"[{','.join(map(str, A))}]")
