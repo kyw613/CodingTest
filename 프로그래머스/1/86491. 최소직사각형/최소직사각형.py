@@ -1,12 +1,13 @@
 def solution(sizes):
-    max_width = 0
-    max_height = 0
+    #큰거 왼쪽 작은거 오른쪽 정렬후 최대찾아서 곱하기
+    max_right = 0
+    max_left = 0
     
-    for w, h in sizes:
-        # 명함의 가로와 세로 중 더 작은 값을 가로, 더 큰 값을 세로로 정렬
-        if w < h:
-            w, h = h, w
-        # 가장 큰 가로 길이와 가장 큰 세로 길이를 업데이트
-        max_width = max(max_width, w)
-        max_height = max(max_height, h)
-    return max_width * max_height
+    for k in range(len(sizes)):
+        if sizes[k][0] <= sizes[k][1]:
+            sizes[k][0], sizes[k][1] = sizes[k][1], sizes[k][0]
+        max_right = max(max_right,sizes[k][1])
+        max_left = max(max_left,sizes[k][0])
+    
+    return max_right * max_left
+        
