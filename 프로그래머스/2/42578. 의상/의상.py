@@ -1,12 +1,13 @@
-from collections import Counter
-
 def solution(clothes):
-    # 의상 종류별로 개수를 세기
-    counter = Counter([kind for name, kind in clothes])
-    
-    combinations = 1
-    for count in counter.values():
-        combinations *= (count + 1)
-    
-    # 아무것도 입지 않은 경우를 제외
-    return combinations - 1
+    # 일부가 겹처도 다른 의상을 추가로 더 착용한경우... -> 이거 부분집합
+    # 먼저 카테고리로 갯수센후 각각에 +1 해서 곱한후  전체에서 -1 해주기.
+    cnt_dict = {}
+    for name,catalog in clothes:
+        if catalog not in cnt_dict:
+            cnt_dict[catalog] = 1
+        else:
+            cnt_dict[catalog] += 1
+    total = 1
+    for i in cnt_dict.values():
+        total *= i+1
+    return total - 1
