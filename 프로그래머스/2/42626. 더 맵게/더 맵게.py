@@ -1,20 +1,22 @@
 import heapq
-
 def solution(scoville, K):
-    heapq.heapify(scoville)
-    result = 0
-    
-    while len(scoville) > 1:
-        if scoville[0] >= K:
-            return result
+    # 가장 낮은 2개의 음식을  가장 안매운거 + (2번째로 안매운거) * 2
+    # heapq 
+    q = []
+    for i in scoville:
+        heapq.heappush(q,i)
+    cnt = 0
+    while True:
+        comp = q[0]
+        if q[0] < K:
+            if len(q) <= 1:
+                return -1
+            cnt += 1
+            first = heapq.heappop(q)
+            second = heapq.heappop(q)
+            heapq.heappush(q,first+2*second)
+        else:
+            break
+    return cnt
         
-        first = heapq.heappop(scoville)
-        second = heapq.heappop(scoville)
-        new_scoville = first + 2 * second
-        heapq.heappush(scoville, new_scoville)
-        result += 1
-    
-    if scoville[0] >= K:
-        return result
-    
-    return -1
+        
