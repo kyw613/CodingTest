@@ -7,11 +7,12 @@ arr.sort(key=lambda x:(-x[0],-x[1],-x[2]))
 comp = (-1,0,0,0)
 cnt = 0
 while True:
-    a1,b1,c1,s1 = arr.pop()
+    a1,b1,c1,s1 = arr.pop(0)
     if comp[0] == a1 and comp[1] == b1 and comp[2] == c1:
         if s1 == target:
             print(cnt)
-            break  
+            break
+        continue
     else:
         cnt += 1
         comp = (a1,b1,c1,s1)
