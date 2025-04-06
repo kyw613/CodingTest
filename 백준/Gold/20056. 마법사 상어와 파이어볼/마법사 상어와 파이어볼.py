@@ -1,50 +1,59 @@
-N, M, K = map(int, input().split())
-fireballs = []
+N,M,K = map(int,input().split())
 
+fireball_list = []
+step = [(-1,0),(-1,1),(0,1),(1,1),(1,0),(1,-1),(0,-1),(-1,-1)]
 for _ in range(M):
-    r, c, m, s, d = map(int, input().split())
-    fireballs.append([r-1, c-1, m, s, d])
+    r,c,m,s,d = map(int,input().split())
+    fireball_list.append((r,c,m,s,d))
 
-# 방향 설정 
-directions = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
-
-
-for step in range(K):
-    
-    # 파이어볼 이동 후 저장(좌표마다 저장 예정)
-    new_positions = [[[] for _ in range(N)] for _ in range(N)]
-    
-    # 파이어볼 이동
-    for r, c, m, s, d in fireballs:
-        dr, dc = directions[d]
-        nr = (r + dr * s) % N  
-        nc = (c + dc * s) % N
-        #nr = (nr + N) % N  # 음수 좌표 처리
-        #nc = (nc + N) % N  # 음수 좌표 처리
-        new_positions[nr][nc].append([m, s, d])
-
-    # 새 파이어볼 리스트
-    fireballs = []
-    
-    # 알고리즘 구현
-    for r in range(N):
-        for c in range(N):
-            if len(new_positions[r][c]) == 1:  
-                fireballs.append([r, c] + new_positions[r][c][0])
-            elif len(new_positions[r][c]) > 1:  # 파이어볼이 2개 이상
-                total_mass = sum(f[0] for f in new_positions[r][c])
-                total_speed = sum(f[1] for f in new_positions[r][c])
-                count = len(new_positions[r][c])
-                new_mass = total_mass // 5
-                if new_mass > 0:  # 질량이 0인 경우 생성x
-                    new_speed = total_speed // count
-                    all_even = all(f[2] % 2 == 0 for f in new_positions[r][c])
-                    all_odd = all(f[2] % 2 != 0 for f in new_positions[r][c])
-                    if all_even or all_odd:  # 모두 짝수거나 모두 홀수인 경우
-                        new_dirs = [0, 2, 4, 6]
+for i in range(K):
+    Graph = [[[] for _ in range(N)] for _ in range(N)] # 0-idx # 여기에 저장해야징
+    # 각자의 방향 속력으로 이동
+    for f in fireball_list:
+        r,c,m,s,d = f[0],f[1],f[2],f[3],f[4]
+        nr,nc  = (r + s * step[d][0] + N)%N , (c + s * step[d][1] + N )%N 
+        Graph[nr][nc].append((nr,nc,m,s,d))
+    fireball_list = []
+    # 분할
+    for y in range(N):
+        for x in range(N):
+            if len(Graph[y][x]) >= 2:
+                cal = Graph[y][x]
+                #질량 합치고 //5 , 속력 다 합친거 // 개수
+                m = 0
+                s = 0
+                ty_1,ty_0 = False, False
+                tyty = False
+                for t in cal:
+                    m += t[2]
+                    s += t[3]
+                    if t[4] % 2 == 1 and ty_0 == False: # 홀수면
+                        ty_1 = True
+                    elif t[4] % 2 == 0 and ty_1 == False:
+                        ty_0 = True
                     else:
-                        new_dirs = [1, 3, 5, 7]
-                    for d in new_dirs:
-                        fireballs.append([r, c, new_mass, new_speed, d])
+                        tyty = True
+                m = m // 5
+                s = s // len(Graph[y][x])
+                if tyty == True and m!= 0: # 홀수
+                    for i in range(1,8,2):
+                        fireball_list.append((y,x,m,s,i))
+                else:
+                    if m == 0:
+                        continue
+                    for i in range(0,7,2):
+                        fireball_list.append((y,x,m,s,i))
+            elif len(Graph[y][x]) == 1:
+                cal = Graph[y][x]
+                for t in cal:
+                    fireball_list.append((t[0],t[1],t[2],t[3],t[4]))
+cnt = 0
+if fireball_list:
+    for t in fireball_list:
+        cnt += t[2]
+    print(cnt)
+else:
+    print(0)
     
-print(sum(f[2] for f in fireballs))
+
+
